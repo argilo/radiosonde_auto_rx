@@ -10,6 +10,7 @@ import autorx.config
 import datetime
 import glob
 import io
+import json
 import logging
 import os.path
 import time
@@ -600,11 +601,33 @@ def path_to_kml_placemark(flight_path,
     return placemark
 
 
+def _read_json_file(filename):
+    with open(filename) as f:
+        input = json.load(f)
+
+    output = {}
+    output["serial"] = strip_sonde_serial(input[0]["serial"])
+    output["last_time"] = input[-1]["time_received"]
+
+    output["path"] = []
+    last_frame = -1
+    for packet in input:
+        if packet["frame"] == last_frame:
+            continue  # skip duplicate frames received by multiple stations
+        output["path"].append((packet["lat"], packet["lon"], packet["alt"]))
+        last_frame = packet["frame"]
+
+    return output
+
+
 def _log_file_to_kml_folder(filename, absolute=True, extrude=True, last_only=False):
     ''' Convert a single sonde log file to a KML Folder object '''
 
     # Read file.
-    _flight_data = read_log_file(filename)
+    if filename.endswith(".json"):
+        _flight_data = _read_json_file(filename)
+    else:
+        _flight_data = read_log_file(filename)
 
     _flight_serial = _flight_data["serial"]
     _landing_time = _flight_data["last_time"]
