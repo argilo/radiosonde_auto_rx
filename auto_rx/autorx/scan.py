@@ -44,7 +44,8 @@ scan_result = {
     "power": [],
     "peak_freq": [],
     "peak_lvl": [],
-    "timestamp": "No data yet.",
+    "timestamp_utc": "No data yet.",
+    "timestamp_local": "No data yet.",
     "threshold": 0,
 }
 
@@ -967,9 +968,11 @@ class SondeScanner(object):
 
             # Update the global scan result
             (_freq_decimate, _power_decimate) = peak_decimation(freq / 1e6, power, 10)
+            timestamp = datetime.datetime.now(datetime.timezone.utc)
             scan_result["freq"] = list(_freq_decimate)
             scan_result["power"] = list(_power_decimate)
-            scan_result["timestamp"] = datetime.datetime.now(datetime.timezone.utc).isoformat()
+            scan_result["timestamp_utc"] = timestamp.strftime("%Y-%m-%d %H:%M:%S %Z")
+            scan_result["timestamp_local"] = timestamp.astimezone(None).strftime("%Y-%m-%d %H:%M:%S %Z")
             scan_result["peak_freq"] = []
             scan_result["peak_lvl"] = []
 

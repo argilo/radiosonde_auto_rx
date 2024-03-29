@@ -4,7 +4,8 @@ var scan_chart_spectra;
 var scan_chart_peaks;
 var scan_chart_threshold;
 var scan_chart_obj;
-var scan_chart_latest_timestamp;
+var scan_chart_latest_timestamp_utc;
+var scan_chart_latest_timestamp_local;
 var scan_chart_last_drawn = "none";
 
 function setup_scan_chart(){
@@ -70,7 +71,7 @@ function setup_scan_chart(){
 
 function redraw_scan_chart(){
 	// Plot the updated data.
-	if(scan_chart_last_drawn === scan_chart_latest_timestamp){
+	if(scan_chart_last_drawn === scan_chart_latest_timestamp_utc){
 		// No need to re-draw.
 		//console.log("No need to re-draw.");
 		return;
@@ -79,9 +80,9 @@ function redraw_scan_chart(){
 	scan_chart_obj.load(scan_chart_peaks);
 	scan_chart_obj.load(scan_chart_threshold);
 
-	scan_chart_last_drawn = scan_chart_latest_timestamp;
+	scan_chart_last_drawn = scan_chart_latest_timestamp_utc;
 
-	//console.log("Scan plot redraw - " + scan_chart_latest_timestamp);
+	//console.log("Scan plot redraw - " + scan_chart_latest_timestamp_utc);
 
 	// Run dark mode check again to solve render issues.
 	var z = getCookie('dark');
@@ -96,20 +97,6 @@ function redraw_scan_chart(){
 		}
 
 	// Show the latest scan time.
-	var date = new Date(scan_chart_latest_timestamp);
-	var date_options = {
-		hourCycle: 'h23',
-		year: 'numeric',
-		month: '2-digit',
-		day: '2-digit',
-		hour: '2-digit',
-		minute: '2-digit',
-		second: '2-digit',
-		timeZoneName: 'short'
-	};
-	if (getCookie('UTC') != 'false') {
-		date_options.timeZone = 'UTC';
-	}
-	var date_converted = date.toLocaleString(window.navigator.language, date_options);
-	$('#scan_results').html('<b>Latest Scan:</b> ' + date_converted);
+	var timestamp = (getCookie('UTC') == 'false') ? scan_chart_latest_timestamp_local : scan_chart_latest_timestamp_utc;
+	$('#scan_results').html('<b>Latest Scan:</b> ' + timestamp);
 }

@@ -204,7 +204,8 @@
                     scan_chart_peaks.columns[1] = ['Peaks'].concat(data.peak_lvl);
                     scan_chart_threshold.columns[0] = ['x_thresh'].concat([data.freq[0],data.freq[data.freq.length-1]]);
                     scan_chart_threshold.columns[1] = ['Threshold'].concat([data.threshold+autorx_config.snr_threshold,data.threshold+autorx_config.snr_threshold]);
-                    scan_chart_latest_timestamp = data.timestamp;
+                    scan_chart_latest_timestamp_utc = data.timestamp_utc;
+                    scan_chart_latest_timestamp_local = data.timestamp_local;
 
                     // Do not update the scan plot if the tab is hidden, or we have the scan plot hidden.
                     if( (document.visibilityState == "hidden") || (document.getElementById("showscanbutton").checked == false) ){
