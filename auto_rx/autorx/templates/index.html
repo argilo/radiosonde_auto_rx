@@ -97,6 +97,11 @@
             }
         }
 
+        // Swap in the correct Tabulator stylesheet before the page renders
+        if ((getCookie('dark') == 'false') || (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches)) {
+            $('#tabulatorsheet').attr('href', '{{ url_for("static", filename="css/tabulator_simple.min.css") }}');
+        }
+
         $( document ).ready(function() {
 
 	    namespace = '/update_status';
